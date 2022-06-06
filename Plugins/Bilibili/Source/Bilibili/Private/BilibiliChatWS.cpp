@@ -424,7 +424,7 @@ void FBilibiliChatWS::EnterRoom()
         return;
     auto buffer = AllocBuffer();
     BufferGuard g(this, buffer);
-    int len = Pack(BILIBILI_WS_OP::WS_OP_USER_AUTHENTICATION, FString::Printf(TEXT("{\"roomid\":%d,\"protover\":3,\"uid\":10206127,\"platform\":\"web\",\"type\":2}"), nRoomID), buffer, DefaultBufferSize);
+    int len = Pack(BILIBILI_WS_OP::WS_OP_USER_AUTHENTICATION, FString::Printf(TEXT("{\"roomid\":%d,\"protover\":3,\"uid\":10206130,\"platform\":\"web\",\"type\":2}"), nRoomID), buffer, DefaultBufferSize);
     WebSocket->Send(buffer, len, true);
 }
 
@@ -451,8 +451,7 @@ void FBilibiliChatWS::OnMessage(TSharedPtr<FJsonObject> JsonObject)
                                       , TEXT("ONLINE_RANK_TOP3"), TEXT("HOT_RANK_CHANGED"), TEXT("HOT_RANK_SETTLEMENT_V2"),TEXT("LIVE_MULTI_VIEW_CHANGE"),TEXT("PREPARING"),TEXT("HOT_ROOM_NOTIFY"),TEXT("LIVE_INTERACTIVE_GAME"),TEXT("HOT_RANK_SETTLEMENT_V2"),TEXT("HOT_RANK_SETTLEMENT_V2"),TEXT("HOT_RANK_SETTLEMENT_V2"),TEXT("HOT_RANK_SETTLEMENT_V2"),TEXT("HOT_RANK_SETTLEMENT_V2"), };
     if (!blackList.Contains(str))
     {
-        //UE_LOG(LogTemp, Warning, TEXT("on message json:%s"), *PrettyJson(JsonObject));
-        //OnMsgCallback.ExecuteIfBound(str, JsonObject);
+        UE_LOG(LogTemp, Warning, TEXT("on message json:%s"), *PrettyJson(JsonObject));
     }
     OnMsgCallback.ExecuteIfBound(str, JsonObject);
 }
