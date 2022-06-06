@@ -1,10 +1,14 @@
 # bilibili_ue_plugin
 
-## 前言
+### 前言
+无言。
 
-### 起源
+### 初衷
+做弹幕互动游戏。最近才发现有这种玩法，真是后知后觉>.< 
+召唤有兴趣的小伙伴一起开发着玩玩，对现行的蹦迪和挤地铁比较无感,缺少目标感和成就感，适合尝鲜。
+后面想搞点有深度一点，或者有趣的一点的玩法。例如朋友在做的《真物理.抓娃娃》。
 
-### 使用
+### 使用说明
 参考doc文件夹的图片。
 下面是各个消息的json完整内容。需要分析的自行研究。
 
@@ -697,6 +701,20 @@ LIVE_INTERACTIVE_GAME
 
 
 ### 参考
+https://github.com/lovelyyoshino/Bilibili-Live-API
+https://github.com/SocialSisterYi/bilibili-API-collect
 
-### 协议
+### 第三方库  
+  
+**Brotli** is a generic-purpose lossless compression algorithm.  
+MIT License.  
+https://github.com/google/brotli
 
+
+**Miniz** is zlib library.  
+MIT licensed.  
+https://github.com/richgel999/miniz
+
+**JsonBlueprint** is JsonUtility for Blueprints.  
+MIT licensed.  
+https://github.com/DaClemens/JsonBlueprint
