@@ -13,14 +13,14 @@
 第二步：把Plugins文件夹放到UE工程文件夹内。如果已经有Plugins文件夹，就把Bilibili文件夹复制到Plugins文件夹内就可以了。  
 第三步：正确获取直播间RoomID,在直播间视频区域右键,点击“播放器日志信息/显示日志”,在信息窗口找到"live player load roomid: XXXXXXXX",这个XXXXXXX就是RoomID。  
 
-![roomid获取](./doc/roomid%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F.png)
+![roomid获取](doc/roomid%E8%8E%B7%E5%8F%96%E6%96%B9%E5%BC%8F.png)
 
 第四步：蓝图使用，具体有两种方式，一看就懂，上图。   
     使用方式1：  
-![使用方式1](.doc/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F1.png)
+![使用方式1](/doc/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F1.png)
 
     使用方式2：  
-![使用方式1](./doc/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F2.png)
+![使用方式1](/doc/%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F2.png)
 
 第五步：最大疑惑应该是GetStringByPath节点的Path参数。这里解释一下：  
 Json支持简单Path方式访问，例如参考中获取DANMU_MSG的/info/2/1，是指获得Root对象的info为key的子对象的，如果子对象是数组，则取下标，所以/2表示子对象数组的第3个元素，第三个元素作为一个数组，再继续取/1即第2个元素，例如下面的json样例，读到的就是"叫这个吧-".
