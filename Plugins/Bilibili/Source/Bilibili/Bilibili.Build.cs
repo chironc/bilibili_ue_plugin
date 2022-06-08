@@ -30,10 +30,9 @@ public class Bilibili : ModuleRules
 				"Core",
 				"CoreUObject",
 				"Projects",
-				"WebSockets",
+				
 				"Engine",
-				"Json",
-				"JsonUtilities",
+				
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -41,6 +40,11 @@ public class Bilibili : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
+				"WebSockets",
+				"HTTP",
+				"Json",
+				"JsonUtilities",
+				"ImageWrapper"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

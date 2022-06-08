@@ -735,3 +735,63 @@ SUPER_CHAT_MESSAGE_JPN
     "roomid": "5096"
 }
 ```
+```json
+SUPER_CHAT_MESSAGE_DELETE
+{
+    "cmd": "SUPER_CHAT_MESSAGE_DELETE",
+    "data":
+    {
+        "ids": [ 4223124 ]
+    },
+    "roomid": 5096
+}
+```
+```json
+WIDGET_BANNER
+{
+    "cmd": "WIDGET_BANNER",
+    "data":
+    {
+        "timestamp": 1654672150,
+        "widget_list":
+        {
+            "204": null
+        }
+    }
+}
+```
+
+```json
+ROOM_BLOCK_MSG
+{
+    "cmd": "ROOM_BLOCK_MSG",
+    "data":
+    {
+        "dmscore": 30,
+        "operator": 1,
+        "uid": 1963018398,
+        "uname": "bili_96245017449"
+    },
+    "uid": "1963018398",
+    "uname": "bili_96245017449"
+}
+```
+```json
+HOT_RANK_SETTLEMENT
+{
+    "cmd": "HOT_RANK_SETTLEMENT",
+    "data":
+    {
+        "area_name": "网游",
+        "cache_key": "4a3b2aa087915da54c03660d9ac2235e",
+        "dm_msg": "恭喜主播 <% 两仪滚 %> 荣登限时热门榜网游榜top6! 即将获得热门流量推荐哦！",
+        "dmscore": 144,
+        "face": "http://i1.hdslb.com/bfs/face/8511424dfd5b9ec60e242584c11195abc6acb2b1.jpg",
+        "icon": "https://i0.hdslb.com/bfs/live/65dbe013f7379c78fc50dfb2fd38d67f5e4895f9.png",
+        "rank": 6,
+        "timestamp": 1654669800,
+        "uname": "两仪滚",
+        "url": "https://live.bilibili.com/p/html/live-app-hotrank/result.html?is_live_half_webview=1&hybrid_half_ui=1,5,250,200,f4eefa,0,30,0,0,0;2,5,250,200,f4eefa,0,30,0,0,0;3,5,250,200,f4eefa,0,30,0,0,0;4,5,250,200,f4eefa,0,30,0,0,0;5,5,250,200,f4eefa,0,30,0,0,0;6,5,250,200,f4eefa,0,30,0,0,0;7,5,250,200,f4eefa,0,30,0,0,0;8,5,250,200,f4eefa,0,30,0,0,0&areaId=2&cache_key=4a3b2aa087915da54c03660d9ac2235e"
+    }
+}
+```

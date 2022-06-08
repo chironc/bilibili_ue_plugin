@@ -33,7 +33,6 @@ public class BilibiliEditor : ModuleRules
 				"Json",
 				"JsonUtilities",
 				"BlueprintGraph",
-				"Bilibili"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -43,6 +42,7 @@ public class BilibiliEditor : ModuleRules
 			new string[]
 			{
 				// ... add private dependencies that you statically link with here ...	
+				"Bilibili"
 			}
 			);
 		
