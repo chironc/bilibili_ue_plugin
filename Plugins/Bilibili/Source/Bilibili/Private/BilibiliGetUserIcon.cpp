@@ -13,74 +13,153 @@ UBilibiliGetUserIcon* UBilibiliGetUserIcon::BilibiliGetUserIcon(UObject* WorldCo
 	UBilibiliGetUserIcon* GetUserIcon = NewObject<UBilibiliGetUserIcon>();
 	GetUserIcon->UserID = UserID;
 	GetUserIcon->RegisterWithGameInstance(WorldContextObject);
+	
 	return GetUserIcon;
 }
 
 void UBilibiliGetUserIcon::Activate()
 {
+	TryRequestGetUserInfo(false);
+}
+
+void UBilibiliGetUserIcon::RegisterWithGameInstance(UObject* WorldContextObject)
+{
+	if (WorldContextObject) {
+		CurrentWorld = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+	}
+	Super::RegisterWithGameInstance(WorldContextObject);
+}
+
+bool UBilibiliGetUserIcon::TryRequestGetUserInfo(bool Retry)
+{
+	if (RetryTimes++ >= MaxRetryGetInfoTimes)
+		return false;
+
+	if (Retry)
+	{
+		if (!CurrentWorld.IsValid())
+			return false;
+		FTimerHandle Handle;
+		CurrentWorld->GetTimerManager().SetTimer(Handle, this, &UBilibiliGetUserIcon::RequestGetUserInfo, RetryDelayTime);
+		return true;
+	}
+
+	RequestGetUserInfo();
+	return true;
+}
+
+bool UBilibiliGetUserIcon::TryDownloadIcon(bool Retry)
+{
+	if (RetryTimes++ >= MaxRetryDownloadTimes)
+		return false;
+
+	if (Retry) 
+	{
+		if (!CurrentWorld.IsValid())
+			return false;
+		FTimerHandle Handle;
+		CurrentWorld->GetTimerManager().SetTimer(Handle, this, &UBilibiliGetUserIcon::DownloadIcon, RetryDelayTime);
+		return true;
+	}
+	
+	DownloadIcon();
+	return true;
+}
+
+void UBilibiliGetUserIcon::RequestGetUserInfo()
+{
 	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &UBilibiliGetUserIcon::OnGetUserInfoResponse);
-	
+
 	TMap<FString, FStringFormatArg> FormatMap;
 	FormatMap.Add(TEXT("UserID"), FStringFormatArg(UserID));
-	
+
 	Request->SetURL(FString::Format(*GetUserInfoURL, FormatMap));
 	Request->SetVerb("GET");
-	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", TEXT("application/json"));
+
+	Request->SetHeader("User-Agent", UserAgent);
+	Request->SetHeader("Accept", TEXT("text/html"));
 	Request->ProcessRequest();
-	//SetReadyToDestroy();
+}
+
+void UBilibiliGetUserIcon::DownloadIcon()
+{
+	TSharedRef<IHttpRequest> DownloadIconRequest = FHttpModule::Get().CreateRequest();
+	DownloadIconRequest->OnProcessRequestComplete().BindUObject(this, &UBilibiliGetUserIcon::OnDownloadIconResponse);
+
+	TMap<FString, FStringFormatArg> FormatMap;
+	FormatMap.Add(TEXT("FaceURL"), FStringFormatArg(FaceURL));
+	FormatMap.Add(TEXT("Width"), FStringFormatArg(MaxImageWidth));
+	FormatMap.Add(TEXT("Height"), FStringFormatArg(MaxImageHeight));
+	FormatMap.Add(TEXT("Quality"), FStringFormatArg(ImageQuality));
+	FormatMap.Add(TEXT("Format"), FStringFormatArg("jpg"));
+
+	DownloadIconRequest->SetURL(FString::Format(*FaceConvertURL, FormatMap));
+	DownloadIconRequest->SetVerb("GET");
+	DownloadIconRequest->SetHeader("User-Agent", UserAgent);
+	DownloadIconRequest->SetHeader("Accept", "image/jpeg");
+	DownloadIconRequest->ProcessRequest();
 }
 
 void UBilibiliGetUserIcon::OnGetUserInfoResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Succ)
 {
 	if (!Succ)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GetUserInfo Http failed. URL:%s"), *Request->GetURL());
-		OnFailed.Broadcast(UserID, nullptr);
-		SetReadyToDestroy();
+		if (!TryRequestGetUserInfo(true))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetUserInfo Http failed. URL:%s"), *Request->GetURL());
+			OnFailed.Broadcast(UserID, nullptr);
+			SetReadyToDestroy();
+		}
 		return;
 	}
 	UBlueprintJsonObject* JsonObject;
 	if (!UBlueprintJsonObject::Parse(Response->GetContentAsString(), JsonObject))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GetUserInfo Json Parse failed. str:%s"), *Response->GetContentAsString());
-		OnFailed.Broadcast(UserID, nullptr);
-		SetReadyToDestroy();
+		if (!TryRequestGetUserInfo(true))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetUserInfo Json Parse failed. url:%s, str:%s"), *Request->GetURL(), *Response->GetContentAsString());
+			OnFailed.Broadcast(UserID, nullptr);
+			SetReadyToDestroy();
+		}
 		return;
 	}
-	FString FaceURL;
-	if (!JsonObject->GetStringByPath(TEXT("/data/face"), FaceURL))
+	if (!JsonObject->GetStringByPath(FaceURLJsonPath, FaceURL))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GetUserInfo Cann't find face info. str:%s"), *Response->GetContentAsString());
-		OnFailed.Broadcast(UserID, nullptr);
-		SetReadyToDestroy();
+		if (!TryRequestGetUserInfo(true))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetUserInfo Cann't find face info. url:%s, str:%s"), *Request->GetURL(), *Response->GetContentAsString());
+			OnFailed.Broadcast(UserID, nullptr);
+			SetReadyToDestroy();
+		}
 		return;
 	}
-	TSharedRef<IHttpRequest> DownloadIconRequest = FHttpModule::Get().CreateRequest();
-	DownloadIconRequest->OnProcessRequestComplete().BindUObject(this, &UBilibiliGetUserIcon::OnDownloadIconResponse);
 	
-	DownloadIconRequest->SetURL(FaceURL);
-	DownloadIconRequest->SetVerb("GET");
-	DownloadIconRequest->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	DownloadIconRequest->ProcessRequest();
+	RetryTimes = 0;//重置
+	TryDownloadIcon(false);
 }
 
 void UBilibiliGetUserIcon::OnDownloadIconResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool Succ)
 {
 	if (!Succ)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Download Icon failed. URL：%s"), *Request->GetURL());
-		OnFailed.Broadcast(UserID, nullptr);
-		SetReadyToDestroy();
+		if (!TryDownloadIcon(true))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Download Icon failed. URL：%s"), *Request->GetURL());
+			OnFailed.Broadcast(UserID, nullptr);
+			SetReadyToDestroy();
+		}
 		return;
 	}
 	UTexture2D* Texture = LoadTexture2D_FromMemory(Response->GetContent());
 	if (!Texture)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Load Icon failed. URL：%s"), *Request->GetURL());
-		OnFailed.Broadcast(UserID, nullptr);
-		SetReadyToDestroy();
+		if (!TryDownloadIcon(true))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Load Icon failed. URL：%s"), *Request->GetURL());
+			OnFailed.Broadcast(UserID, nullptr);
+			SetReadyToDestroy();
+		}
 		return;
 	}
 
