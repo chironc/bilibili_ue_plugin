@@ -681,3 +681,57 @@ LIVE_INTERACTIVE_GAME
     }
 }
 ```
+```json
+SUPER_CHAT_MESSAGE_JPN
+{
+    "cmd": "SUPER_CHAT_MESSAGE_JPN",
+    "data": {
+        "id": "4223089",
+        "uid": "349096092",
+        "price": 30,
+        "rate": 1000,
+        "message": "卡鬼是吧（doge）",
+        "message_jpn": "",
+        "is_ranked": 1,
+        "background_image": "https://i0.hdslb.com/bfs/live/a712efa5c6ebc67bafbe8352d3e74b820a00c13e.png",
+        "background_color": "#EDF5FF",
+        "background_icon": "",
+        "background_price_color": "#7497CD",
+        "background_bottom_color": "#2A60B2",
+        "ts": 1654671658,
+        "token": "CAB37922",
+        "medal_info": {
+            "icon_id": 0,
+            "target_id": 183430,
+            "special": "",
+            "anchor_uname": "两仪滚",
+            "anchor_roomid": 388,
+            "medal_level": 24,
+            "medal_name": "猛男",
+            "medal_color": "#1a544b"
+        },
+        "user_info": {
+            "uname": "Georgeee_Yeh",
+            "face": "http://i0.hdslb.com/bfs/face/b61c64aad8c0325f6f49c871d6652c0acb820f12.jpg",
+            "face_frame": "https://i0.hdslb.com/bfs/live/80f732943cc3367029df65e267960d56736a82ee.png",
+            "guard_level": 3,
+            "user_level": 10,
+            "level_color": "#969696",
+            "is_vip": 0,
+            "is_svip": 0,
+            "is_main_vip": 1,
+            "title": "0",
+            "manager": 0
+        },
+        "time": 60,
+        "start_time": 1654671658,
+        "end_time": 1654671718,
+        "gift": {
+            "num": 1,
+            "gift_id": 12000,
+            "gift_name": "醒目留言"
+        }
+    },
+    "roomid": "5096"
+}
+```
